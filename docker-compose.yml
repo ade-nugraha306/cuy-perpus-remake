@@ -12,6 +12,7 @@ services:
       - /app/node_modules
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/db_perpus
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed && pnpm start"
     depends_on:
       - db
 

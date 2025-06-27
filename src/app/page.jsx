@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-export default function Home() {
-  const session = cookies().get("session");
+export default async function Home() {
+  const session = (await cookies()).get("session");
 
   if (session) {
     redirect("/books");
