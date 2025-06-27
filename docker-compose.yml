@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cuyperpus_web
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/db_perpus
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: cuyperpus_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db_perpus
+    ports:
+      - "5432:5432"

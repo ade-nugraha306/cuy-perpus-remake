@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Books{
+  id Int @id @default(autoincrement())
+  judul String
+  penulis String
+  penerbit String
+  deskripsi String
+  thumbnail String
+  tahun_terbit Int
+  kategori_buku Kategori
+  borrows Borrows[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Users{
+  id Int @id @default(autoincrement())
+  username String
+  email String @unique
+  password String
+  role Role @default(USER)
+  borrows Borrows[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Borrows{
+  id Int @id @default(autoincrement())
+  user Users @relation(fields: [userId], references: [id])
+  userId Int
+  book Books @relation(fields: [bookId], references: [id])
+  bookId Int
+  status_peminjaman StatusPeminjaman @default(REQUESTED)
+  tanggal_peminjaman DateTime?
+  tanggal_pengembalian DateTime?
+  deadline DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  PETUGAS
+  USER
+}
+
+enum Kategori {
+  edukasi
+  anime
+  sejarah
+  teknologi
+  fiksi
+}
+
+enum StatusPeminjaman {
+  REQUESTED
+  DIPINJAM
+  DITOLAK
+  DIKEMBALIKAN
+}
