@@ -1,114 +1,107 @@
 ## CuyPerpus
 
-CuyPerpus adalah project perpustakaan digital yang sebelumnya dibuat menggunakan native PHP, namun belum selesai. Project ini sedang dikembangkan ulang dengan struktur dan fitur yang sama, namun menggunakan teknologi modern seperti Next.js, Docker, dan Prisma.
+Menyediakan RESTful API untuk mengelola sistem perpustakaan digital dengan empat endpoint API utama diantara nya adalah:
 
-## Cara jalankan dan review projek ini?
+- **Auth** / **Login / Register** Endpoint
 
-- Pastikan sudah mempunyai **Docker** lalu jalankan perintah berikut ini jika pertama kali ingin menjalankan Project **CuyPerpus**
+|Method|Endpoint|Deskripsi|
+|------|--------|---------|
+|`POST`|`/api/auth/login`|Login user dan generate session|
+|`POST`|`/api/auth/register`|Register user dan generate session|
+|`GET`|`/api/auth/me`|Menampilkan status user|
+|`POST`|`/api/auth/logout`|Logout & hapus session cookie|
 
-```bash
-docker compose up --build
+- **Books Endpoint**
+
+|Method|Endpoint|Deskripsi|
+|------|--------|---------|
+|`GET`|`/api/books`|Mendapatkan semua data buku|
+|`GET`|`/api/books/:id`|Mendapatkan semua data buku berdasarkan ID|
+|`POST`|`/api/books/`|Membuat data baru (hanya admin dan petugas)|
+|`EDIT`|`/api/books/:id`|Mengedit data (hanya admin dan petugas)|
+|`DELETE`|`/api/books/:id`|Menghapus data berdasarkan ID (hanya admin dan petugas)|
+
+- **Users Endpoint** 
+
+|Method|Endpoint|Deskripsi|
+|------|--------|---------|
+|`GET`|`/api/users`|Mendapatkan semua data user|
+|`GET`|`/api/users/:id`|Mendapatkan semua data user berdasarkan ID|
+
+- **Borrows Endpoint**
+
+|Method|Endpoint|Deskripsi|
+|------|--------|---------|
+|`GET`|`/api/borrows`|Mendapatkan semua data peminjaman|
+|`GET`|`/api/borrows/:id`|Mendapatkan semua data peminjaman berdasarkan ID|
+|`POST`|`/api/borrows/`|Membuat data baru dan set data peminjaman default `PENDING` (hanya admin dan petugas)|
+|`EDIT`|`/api/borrows/:id`|Update status peminjaman (hanya admin dan petugas)|
+|`DELETE`|`/api/borrows/:id`|Menghapus data berdasarkan ID (hanya admin dan petugas)|
+
+Contoh Response standar:
+
+- **200**
+
+```json
+{
+  "status":"200",
+  "message":"Success",
+  "data":{...},
+}
 ```
 
-## Cara mengembangkan project ini?
+- **201**
 
-- Backend Developer:
-  Salin file `.env.example` menjadi `.env` dan sesuaikan konfigurasi database jika diperlukan.
-
-  > Kami menyarankan menggunakan `Laragon` jika kamu belum menginstall `Docker` secara local
-
-  Lakukan pengembangan pada folder:
-  `src/app/api/` -> API Routes (Controllers)
-  `prisma/schema.prisma` -> Skema dan migrasi database
-
-  Jalankan perintah berikut :
-
-  ```bash
-  npx prisma generate # Generate Prisma Client WAJIB
-  npx prisma migrate dev # (Opsional) Jalankan migrasi database jika belum ada database
-  npx prisma db seed # (Opsional) Seeding database dengan data dummy yang sudah ditentukan
-  ```
-
-> Pastikan Databse sudah menyala sebelum menjalankan perintah Prisma
-
-  <br>
-
-- Frontend Developer:
-  Install Dependencies terlebih dahulu:
-
-```bash
-npm i
-#Atau jika kamu menggunakan PNPM
-pnpm i
+```json
+{
+  "status":"201",
+  "message":"Success",
+  "data":{...},
+}
 ```
 
-Kembangkan UI dan UX pada folder:
-`src/app/`
+- **400**
 
-**PENTING!!**
-
-- Frontend Developer dilarang mengubah isi folder `src/app/api/` karena itu merupakan domain kerja Backend Developer.
-
-- Backend Developer dilarang mengubah isi folder `src/app/` karena itu merupakan domain kerja Frontend Developer.
-
-## Say Hi kepada para kontribusi kami!
-
-- [Ade Nugraha](https://github.com/ade-nugraha306)
-- [Gusty Erlana Aldiansyah](https://github.com/crytomzrt)
-- [Fahlevy Miasya Rangkuti]()
-
-## CuyPerpus
-
-CuyPerpus is a digital library project that was originally built using native PHP, but left unfinished. This remake project aims to rebuild it using the same structure and features—but powered by modern technologies like **Next.js**, **Docker**, and **Prisma**.
-
-## How to Run and Review this Project
-
-Make sure **Docker** is installed on your machine, then run the following command to build and start the app for the first time:
-
-```bash
-docker compose up --build
+```json
+{
+  "status":"400",
+  "message":"Bad Request"
+}
 ```
 
-## How to Develop This Project
+- **401**
 
-- Backend Developer
-  Copy `.env.example` to `.env` and adjust the database configuration if needed.
-  > We recommend using Laragon if you're not using Docker locally.
-
-Work inside the following folders:
-`src/app/api/` → API Routes (Controllers)
-`prisma/schema.prisma` → Database schema and migrations
-
-Run These Commands:
-
-```bash
-  npx prisma generate # Generate Prisma Client
-  npx prisma migrate dev # (Optional) Run database migrations if there are no databases on your local machine
-  npx prisma db seed # (Optional) Run database seeding with dummy data
+```json
+{
+  "status":"401",
+  "message":"Unauthorized: Please login"
+}
 ```
 
-> Make sure the database is up and running before running any Prisma commands.
+- **403**
 
-- Frontend Developer
-  Install Dependencies:
-
-```bash
-npm i
-#Or if you're using PNPM
-pnpm i
+```json
+{
+  "status":"403",
+  "message":"Forbidden: Insufficient privileges"
+}
 ```
 
-Work on UI/UX development inside the folder:
-`src/app/`
+- **404**
 
-**IMPORTANT!!**
+```json
+{
+  "status":"404",
+  "message":"Endpoint Not Found"
+}
+```
 
-- **Frontend Developers** must not edit or access `src/app/api/`, as it is exclusively for backend development.
+- **500**
 
-- **Backend Developers** must not edit or access `src/app/`, as it is exclusively for frontend development.
+```json
+{
+  "status":"500",
+  "message":"Internal Server Error"
+}
+```
 
-## Say Hi to our contributors
-
-- [Ade Nugraha](https://github.com/ade-nugraha306)
-- [Gusty Erlana Aldiansyah](https://github.com/crytomzrt)
-- [Fahlevy Miasya Rangkuti]()
