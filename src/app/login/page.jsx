@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -16,7 +17,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -24,11 +25,11 @@ export default function LoginPage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.message || "Login gagal");
+      if (res.ok) {
+        router.push("/?logged_in=true");
+        router.refresh();
       } else {
-        // Redirect ke dashboard atau halaman utama
-        router.push("/");
+        setError(data.message);
       }
     } catch (err) {
       setError("Terjadi kesalahan saat login.");
@@ -38,15 +39,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "300px" }}>
+    <div className="p-8 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-6">Login</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="email"
           placeholder="Email"
           value={email}
           required
           onChange={(e) => setEmail(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
         />
 
         <input
@@ -55,13 +57,20 @@ export default function LoginPage() {
           value={password}
           required
           onChange={(e) => setPassword(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
         />
 
-        <button type="submit" disabled={loading}>
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+        >
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="text-red-500">{error}</p>}
+
+        <p>Don't Have Account? <Link href="/register" className="text-blue-600 hover:underline">Register</Link></p>
       </form>
     </div>
   );

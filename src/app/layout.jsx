@@ -1,4 +1,3 @@
-// app/layout.js
 import "./globals.css";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -9,7 +8,7 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const session = cookieStore.get("session");
   let user = null;
 
@@ -30,28 +29,38 @@ export default async function RootLayout({ children }) {
           <Link href="/" className="text-xl font-bold">
             CuyPerpus
           </Link>
-          <nav className="flex gap-4">
-            <Link href="/books">Books</Link>
-            <Link href="/borrows">Borrows</Link>
+          <nav className="flex gap-4 items-center">
+            <Link href="/books" className="hover:underline">
+              Books
+            </Link>
+            <Link href="/borrows" className="hover:underline">
+              Borrows
+            </Link>
+
             {user ? (
               <>
                 <span className="text-sm text-gray-600">
-                  Hello, {user.username} ({user.role})
+                  Hello, <b>{user.username}</b> ({user.role})
                 </span>
                 <form action="/api/auth/logout" method="POST">
-                  <button type="submit" className="text-red-600 hover:underline">
+                  <button
+                    type="submit"
+                    className="text-red-600 hover:underline"
+                  >
                     Logout
                   </button>
                 </form>
               </>
             ) : (
               <>
-                <Link href="/login">Login</Link>
-                <Link href="/register">Register</Link>
+                <Link href="/login" className="hover:underline">
+                  Login
+                </Link>
               </>
             )}
           </nav>
         </header>
+
         <main className="p-4 max-w-4xl mx-auto">{children}</main>
       </body>
     </html>

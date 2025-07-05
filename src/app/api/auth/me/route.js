@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     const cookie = cookies().get("session");
 
     if (!cookie) {
-      return Response.json({
+      return NextResponse.json({
         status: 401,
         message: "Not authenticated",
       });
@@ -15,13 +16,13 @@ export async function GET() {
       Buffer.from(cookie.value, "base64").toString("utf-8")
     );
 
-    return Response.json({
+    return NextResponse.json({
       status: 200,
       message: "Authenticated user",
       data: decoded,
     });
   } catch (err) {
-    return Response.json({
+    return NextResponse.json({
       status: 500,
       message: "Error reading session",
       error: err.message,

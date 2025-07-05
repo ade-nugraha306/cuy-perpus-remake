@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ export async function POST(request) {
     const { email, password } = body;
 
     if (!email || !password) {
-      return Response.json({
+      return NextResponse.json({
         status: 400,
         message: "Missing email or password",
       });
@@ -19,7 +20,7 @@ export async function POST(request) {
     const user = await prisma.users.findUnique({ where: { email } });
 
     if (!user) {
-      return Response.json({
+      return NextResponse.json({
         status: 401,
         message: "Email is not registered",
       });
@@ -27,7 +28,7 @@ export async function POST(request) {
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return Response.json({
+      return NextResponse.json({
         status: 401,
         message: "Invalid password",
       });
@@ -43,7 +44,7 @@ export async function POST(request) {
       "base64"
     );
 
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     cookieStore.set("session", encoded, {
       httpOnly: true,
       path: "/",
@@ -53,13 +54,13 @@ export async function POST(request) {
     // Login success
     const { password: _, ...userWithoutPassword } = user;
 
-    return Response.json({
+    return NextResponse.json({
       status: 200,
       message: "Login successful",
       data: userWithoutPassword,
     });
   } catch (err) {
-    return Response.json({
+    return NextResponse.json({
       status: 500,
       message: "Server error",
       error: err.message,

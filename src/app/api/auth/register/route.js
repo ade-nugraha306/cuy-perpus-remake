@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
@@ -20,7 +21,7 @@ export async function POST(request) {
     });
 
     if (existingUser) {
-      return Response.json({
+      return NextResponse.json({
         status: 409,
         message: "User already exists",
       });
@@ -37,7 +38,7 @@ export async function POST(request) {
       },
     });
 
-    return Response.json({
+    return NextResponse.json({
       status: 201,
       message: "Successfully Created Data!",
       data: {
@@ -48,7 +49,7 @@ export async function POST(request) {
       },
     });
   } catch (err) {
-    return Response.json({
+    return NextResponse.json({
       status: 500,
       message: "Error creating data",
       error: err.message,

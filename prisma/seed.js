@@ -1,31 +1,37 @@
 const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
+  const hashedAdmin = await bcrypt.hash("admin123", 10);
+  const hashedPetugas = await bcrypt.hash("petugas123", 10);
+  const hashedUser = await bcrypt.hash("user123", 10);
+  const hashedMulyono = await bcrypt.hash("admin#1234", 10);
+
   await prisma.users.createMany({
     data: [
       {
         username: "adminUser",
         email: "admin@cuyperpus.com",
-        password: "hashed_password_123",
+        password: hashedAdmin,
         role: "ADMIN",
       },
       {
         username: "petugasUser",
         email: "petugas@cuyperpus.com",
-        password: "hashed_password_456",
+        password: hashedPetugas,
         role: "PETUGAS",
       },
       {
         username: "User",
         email: "user@cuyperpus.com",
-        password: "hashed_password_789",
+        password: hashedUser,
         role: "USER",
       },
       {
         username: "Mulyono",
         email: "mulyono@cuyperpus.com",
-        password: "admin#1234",
+        password: hashedMulyono,
         role: "USER",
       },
     ],
